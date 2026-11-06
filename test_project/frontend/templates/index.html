@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заметки — Go + Python</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <h1>Менеджер заметок</h1>
+    <p class="subtitle">Python (Flask) — фронтенд · Go — REST API · PostgreSQL — хранилище</p>
+
+    <section class="card">
+      <h2>Новая заметка</h2>
+      <form action="/notes" method="post">
+        <input type="text" name="title" placeholder="Заголовок" required>
+        <textarea name="content" placeholder="Текст заметки" rows="3"></textarea>
+        <button type="submit">Сохранить</button>
+      </form>
+    </section>
+
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <section class="card">
+      <h2>Все заметки <span class="count">{{ notes|length }}</span></h2>
+      {% if notes %}
+        <ul class="notes">
+          {% for note in notes %}
+            <li class="note {% if selected and selected.id == note.id %}selected{% endif %}">
+              <a href="/?note_id={{ note.id }}"><strong>{{ note.title }}</strong></a>
+              {% if note.content %}
+                <div class="note-content">{{ note.content }}</div>
+              {% endif %}
+              <div class="note-meta">ID {{ note.id }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">Заметок пока нет — создайте первую!</p>
+      {% endif %}
+    </section>
+
+    {% if selected %}
+      <section class="card selected-card">
+        <h2>Выбранная заметка</h2>
+        <dl>
+          <dt>ID</dt><dd>{{ selected.id }}</dd>
+          <dt>Заголовок</dt><dd>{{ selected.title }}</dd>
+          <dt>Текст</dt><dd>{{ selected.content }}</dd>
+          <dt>Дата</dt><dd>{{ selected.created_at }}</dd>
+        </dl>
+      </section>
+    {% endif %}
+  </main>
+</body>
+</html>
